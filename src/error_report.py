@@ -11,7 +11,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PREDICTIONS_PATH = PROJECT_ROOT / "reports" / "distilbert_test_predictions.csv"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 FIGURES_DIR = REPORTS_DIR / "figures"
-ERROR_ANALYSIS_DIR = REPORTS_DIR / "error_analysis"
+ERROR_REPORT_DIR = REPORTS_DIR / "error_report"
 
 
 LABEL_MAP = {
@@ -75,7 +75,7 @@ def create_confusion_matrix_table(predictions_df: pd.DataFrame) -> pd.DataFrame:
         columns=[f"predicted_{label}" for label in LABEL_NAMES]
     )
 
-    output_path = ERROR_ANALYSIS_DIR / "confusion_matrix_table.csv"
+    output_path = ERROR_REPORT_DIR / "confusion_matrix_table.csv"
     matrix_df.to_csv(output_path)
 
     print("\nConfusion matrix table:")
@@ -88,7 +88,7 @@ def create_confusion_matrix_table(predictions_df: pd.DataFrame) -> pd.DataFrame:
 
 def save_confusion_matrix_plot(predictions_df: pd.DataFrame) -> None:
     """
-    Saves a confusion matrix image for the error analysis section.
+    Saves a confusion matrix image for the error report.
     """
     FIGURES_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -107,7 +107,7 @@ def save_confusion_matrix_plot(predictions_df: pd.DataFrame) -> None:
     plt.xticks(rotation=30)
     plt.tight_layout()
 
-    output_path = FIGURES_DIR / "distilbert_error_analysis_confusion_matrix.png"
+    output_path = FIGURES_DIR / "distilbert_error_report_confusion_matrix.png"
     plt.savefig(output_path)
     plt.close()
 
@@ -139,7 +139,7 @@ def save_error_subsets(predictions_df: pd.DataFrame) -> None:
     """
     Saves different subsets of model errors for manual inspection.
     """
-    ERROR_ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
+    ERROR_REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
     misclassified_df = predictions_df[
         predictions_df["label"] != predictions_df["predicted_label"]
@@ -188,11 +188,11 @@ def save_error_subsets(predictions_df: pd.DataFrame) -> None:
     }
 
     for filename, dataframe in files_to_save.items():
-        output_path = ERROR_ANALYSIS_DIR / filename
+        output_path = ERROR_REPORT_DIR / filename
         dataframe.to_csv(output_path, index=False)
 
-    print("\nError analysis CSV files saved to:")
-    print(ERROR_ANALYSIS_DIR)
+    print("\nError report CSV files saved to:")
+    print(ERROR_REPORT_DIR)
 
 
 def create_error_summary(
@@ -202,8 +202,6 @@ def create_error_summary(
 ) -> None:
     """
     Creates a factual text summary based only on the model outputs.
-
-    The summary avoids hardcoded subjective interpretations.
     """
     total_examples = len(predictions_df)
 
@@ -238,7 +236,7 @@ def create_error_summary(
 
     summary_lines = []
 
-    summary_lines.append("DistilBERT Error Analysis Summary")
+    summary_lines.append("DistilBERT Error Report")
     summary_lines.append("=" * 40)
     summary_lines.append("")
     summary_lines.append(f"Total test examples: {total_examples}")
@@ -279,16 +277,16 @@ def create_error_summary(
         "of misclassified examples."
     )
 
-    output_path = ERROR_ANALYSIS_DIR / "error_analysis_summary.txt"
+    output_path = ERROR_REPORT_DIR / "error_report_summary.txt"
 
     with open(output_path, "w", encoding="utf-8") as file:
         file.write("\n".join(summary_lines))
 
-    print(f"\nError analysis summary saved to: {output_path}")
+    print(f"\nError report summary saved to: {output_path}")
 
 
 def main() -> None:
-    ERROR_ANALYSIS_DIR.mkdir(parents=True, exist_ok=True)
+    ERROR_REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
     predictions_df = load_predictions()
 
