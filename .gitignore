@@ -100,11 +100,11 @@ reports/*.json
 reports/*.txt
 reports/*.csv
 reports/figures/*
-reports/error_analysis/*
+reports/error_report/*
 
 !reports/.gitkeep
 !reports/figures/.gitkeep
-!reports/error_analysis/.gitkeep
+!reports/error_report/.gitkeep
 
 # =========================
 # ML model / binary files
